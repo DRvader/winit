@@ -21,7 +21,10 @@ use windows_sys::{
         },
         UI::{
             HiDpi::{DPI_AWARENESS_CONTEXT, MONITOR_DPI_TYPE, PROCESS_DPI_AWARENESS},
-            Input::KeyboardAndMouse::GetActiveWindow,
+            Input::{
+                KeyboardAndMouse::GetActiveWindow,
+                Pointer::{POINTER_PEN_INFO, POINTER_TOUCH_INFO},
+            },
             WindowsAndMessaging::{
                 ClipCursor, GetClientRect, GetClipCursor, GetSystemMetrics, GetWindowPlacement,
                 GetWindowRect, IsIconic, ShowCursor, IDC_APPSTARTING, IDC_ARROW, IDC_CROSS,
@@ -236,6 +239,10 @@ pub type AdjustWindowRectExForDpi = unsafe extern "system" fn(
     dwExStyle: u32,
     dpi: u32,
 ) -> BOOL;
+pub type GetPointerTouchInfo =
+    unsafe extern "system" fn(pointerId: u32, touchInfo: *mut POINTER_TOUCH_INFO) -> BOOL;
+pub type GetPointerPenInfo =
+    unsafe extern "system" fn(pointId: u32, penInfo: *mut POINTER_PEN_INFO) -> BOOL;
 
 pub static GET_DPI_FOR_WINDOW: Lazy<Option<GetDpiForWindow>> =
     Lazy::new(|| get_function!("user32.dll", GetDpiForWindow));
@@ -251,3 +258,7 @@ pub static SET_PROCESS_DPI_AWARENESS: Lazy<Option<SetProcessDpiAwareness>> =
     Lazy::new(|| get_function!("shcore.dll", SetProcessDpiAwareness));
 pub static SET_PROCESS_DPI_AWARE: Lazy<Option<SetProcessDPIAware>> =
     Lazy::new(|| get_function!("user32.dll", SetProcessDPIAware));
+pub(crate) static GET_POINTER_TOUCH_INFO: Lazy<Option<GetPointerTouchInfo>> =
+    Lazy::new(|| get_function!("user32.dll", GetPointerTouchInfo));
+pub(crate) static GET_POINTER_PEN_INFO: Lazy<Option<GetPointerPenInfo>> =
+    Lazy::new(|| get_function!("user32.dll", GetPointerPenInfo));
