@@ -1857,6 +1857,7 @@ unsafe fn public_window_callback_inner(
                             },
                             location,
                             force: None, // WM_TOUCH doesn't support pressure information
+                            pen_state: None,
                             id: input.dwID as u64,
                             device_id: DEVICE_ID,
                         }),
@@ -1988,25 +1989,25 @@ unsafe fn public_window_callback_inner(
                                             pen_info.assume_init().pressure
                                         })
                                         .map(|f| {
+                                            let pen_info = unsafe { pen_info.assume_init() };
                                             (
                                                 f,
                                                 crate::event::PenState {
-                                                    rotation: pen_info.assume_init().rotation
-                                                        as f64,
+                                                    rotation: pen_info.rotation as f64,
                                                     tilt: (
-                                                        pen_info.assume_init().tiltX as f64,
-                                                        pen_info.assume_init().tiltY as f64,
+                                                        pen_info.tiltX as f64,
+                                                        pen_info.tiltY as f64,
                                                     ),
                                                     barrel: util::has_flag(
-                                                        pen_info.assume_init().penFlags,
+                                                        pen_info.penFlags,
                                                         PEN_FLAG_BARREL,
                                                     ),
                                                     inverted: util::has_flag(
-                                                        pen_info.assume_init().penFlags,
+                                                        pen_info.penFlags,
                                                         PEN_FLAG_INVERTED,
                                                     ),
                                                     eraser: util::has_flag(
-                                                        pen_info.assume_init().penFlags,
+                                                        pen_info.penFlags,
                                                         PEN_FLAG_ERASER,
                                                     ),
                                                 },
