@@ -33,13 +33,11 @@ impl XConnection {
             .reply()?;
 
         // Read the _XSETTINGS_SETTINGS property.
-        let data: Vec<u8> = self
-            .get_property(
-                owner.owner,
-                atoms[_XSETTINGS_SETTINGS],
-                atoms[_XSETTINGS_SETTINGS],
-            )
-            .unwrap();
+        let data: Vec<u8> = self.get_property(
+            owner.owner,
+            atoms[_XSETTINGS_SETTINGS],
+            atoms[_XSETTINGS_SETTINGS],
+        )?;
 
         // Parse the property.
         let dpi_setting = read_settings(&data)?
@@ -253,6 +251,7 @@ impl Endianness {
 }
 
 /// Parser errors.
+#[allow(dead_code)]
 #[derive(Debug)]
 pub enum ParserError {
     /// Ran out of bytes.
@@ -276,9 +275,8 @@ impl ParserError {
 }
 
 #[cfg(test)]
+/// Tests for the XSETTINGS parser.
 mod tests {
-    //! Tests for the XSETTINGS parser.
-
     use super::*;
 
     const XSETTINGS: &str = include_str!("tests/xsettings.dat");

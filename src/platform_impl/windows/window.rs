@@ -724,7 +724,7 @@ impl Window {
             _ => {}
         }
 
-        window_state_lock.fullscreen = fullscreen.clone();
+        window_state_lock.fullscreen.clone_from(&fullscreen);
         drop(window_state_lock);
 
         self.thread_executor.execute_in_thread(move || {
@@ -1494,8 +1494,8 @@ thread_local! {
         }
     };
 
-    static TASKBAR_LIST: Cell<*mut ITaskbarList> = Cell::new(ptr::null_mut());
-    static TASKBAR_LIST2: Cell<*mut ITaskbarList2> = Cell::new(ptr::null_mut());
+    static TASKBAR_LIST: Cell<*mut ITaskbarList> = const { Cell::new(ptr::null_mut()) };
+    static TASKBAR_LIST2: Cell<*mut ITaskbarList2> = const { Cell::new(ptr::null_mut()) };
 }
 
 pub fn com_initialized() {
