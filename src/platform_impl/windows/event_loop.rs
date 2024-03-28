@@ -1985,14 +1985,13 @@ unsafe fn public_window_callback_inner(
                                         )
                                     } {
                                         0 => None,
-                                        _ => normalize_pointer_pressure(unsafe {
-                                            pen_info.assume_init().pressure
-                                        })
-                                        .map(|f| {
-                                            let pen_info = unsafe { pen_info.assume_init() };
-                                            (
-                                                f,
-                                                crate::event::PenState {
+                                        _ => Some((
+                                            normalize_pointer_pressure(unsafe {
+                                                pen_info.assume_init().pressure
+                                            }),
+                                            {
+                                                let pen_info = unsafe { pen_info.assume_init() };
+                                                Some(crate::event::PenState {
                                                     rotation: pen_info.rotation as f64,
                                                     tilt: (
                                                         pen_info.tiltX as f64,
@@ -2010,12 +2009,11 @@ unsafe fn public_window_callback_inner(
                                                         pen_info.penFlags,
                                                         PEN_FLAG_ERASER,
                                                     ),
-                                                },
-                                            )
-                                        }),
+                                                })
+                                            },
+                                        )),
                                     }
                                 })
-                                .map(|v| (Some(v.0), Some(v.1)))
                                 .unwrap_or((None, None))
                         }
                         _ => (None, None),
